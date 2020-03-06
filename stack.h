@@ -11,8 +11,8 @@ class Stack {
     Stack() : top(0) {}
     void push(Item value) { data[top++] = value; }
     Item pop() { return data[--top]; }
-    bool isEmpty() { return !top; }
-    Item peek() { return data[top-1]; }
+    bool isEmpty() const { return !top; }
+    Item peek() const { return data[top-1]; } 
     friend std::ostream& operator<<(std::ostream& o, Stack& s) {
         while (!s.isEmpty()) {
             o << s.pop() << ' ';

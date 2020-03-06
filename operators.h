@@ -19,6 +19,15 @@ class Operator {
     virtual double apply(double val1) {}
 };
 
+// class Unary : public Operator {
+//     virtual double apply(double val1) = 0;
+// };
+
+// class Binary : public Operator {
+//     virtual double apply(double val1, double val2) = 0;
+//     virtual double apply(double val1) = 0;
+// };
+
 class Plus : public Operator {
     virtual double apply(double val1, double val2) { return val1 + val2; }
 };
@@ -36,14 +45,20 @@ class Sub : public Operator {
 };
 
 class Exp : public Operator {
-    virtual double apply(double val1, double val2) { return pow(val2, val1); }
+    virtual double apply(double val1, double val2) {
+         return pow(val2, val1); }
 };
 
 class Neg : public Operator {
     virtual double apply(double val1) { return val1 * -1; }
 };
 
-class LeftParen : public Operator {};
+class Mul2 : public Operator {
+    virtual double apply(double val1) { return val1 * 2; }
+};
+
+class LeftParen : public Operator {
+};
 using op_ptr = std::shared_ptr<Operator>;
 
 struct CompleteOperator {
@@ -54,4 +69,5 @@ struct CompleteOperator {
 };
 
 using cop_ptr = CompleteOperator*;
+// using cop_ptr = std::shared_ptr<CompleteOperator>;
 #endif

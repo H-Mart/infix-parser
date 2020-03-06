@@ -5,9 +5,9 @@
 #include "operators.h"
 #include "stack.h"
 
-const int MAX_STACK_SIZE = 5;
+const int MAX_STACK_SIZE = 100;
 
-//todo currently pops more off stack than exist
+// todo currently pops more off stack than exist
 
 std::unordered_map<char, CompleteOperator> operators = {
     {'+', CompleteOperator{op_ptr(new Plus), 1, LEFTRIGHT, BINARY}},
@@ -16,13 +16,22 @@ std::unordered_map<char, CompleteOperator> operators = {
     {'*', CompleteOperator{op_ptr(new Mul), 10, LEFTRIGHT, BINARY}},
     {'^', CompleteOperator{op_ptr(new Exp), 100, RIGHTLEFT, BINARY}},
     {'~', CompleteOperator{op_ptr(new Neg), 10, RIGHTLEFT, UNARY}},
+    {'$', CompleteOperator{op_ptr(new Mul2), 10, RIGHTLEFT, UNARY}},
     {'(', CompleteOperator{op_ptr(new LeftParen), -1, RIGHTLEFT, UNARY}}};
 
-enum LastRead { OPERATOR,
-                OPERAND };
+enum LastRead { OPERATOR, OPERAND };
 
 void applyOperation(cop_ptr&, Stack<cop_ptr, MAX_STACK_SIZE>&,
                     Stack<double, MAX_STACK_SIZE>&);
+
+// todo right left associativity has issues
+
+bool checkEval(cop_ptr const& curr, cop_ptr const& prev) {
+    return (
+        (curr->assoc <= prev->assoc && curr->precedence < prev->precedence) ||
+        (curr->assoc == LEFTRIGHT && curr->assoc == prev->assoc &&
+         curr->precedence == prev->precedence));
+}
 
 int main() {
     Stack<cop_ptr, MAX_STACK_SIZE> optrs;
@@ -30,7 +39,7 @@ int main() {
     LastRead lastRead = OPERATOR;  // if the first character is a '-'
                                    // then it needs to be treated as a negative
 
-    auto test = std::string("-((1+2)^(3+1))");
+    auto test = std::string("1^-1");
 
     for (auto ch : test) {
         if (isdigit(ch)) {
@@ -54,9 +63,7 @@ int main() {
             } else {
                 op = cop_ptr(&operators[ch]);
             }
-            while (!optrs.isEmpty() &&
-                   (optrs.peek()->precedence >= op->precedence) &&
-                   (op->assoc != RIGHTLEFT && optrs.peek()->assoc != RIGHTLEFT)) {
+            while (!optrs.isEmpty() && checkEval(op, optrs.peek())) {
                 auto topOp = optrs.pop();
                 applyOperation(topOp, optrs, opnds);
             }
@@ -64,7 +71,7 @@ int main() {
             lastRead = OPERATOR;
         }
     }
-    while (!optrs.isEmpty()) {
+    while (!optrs.isEmpty()) {  // need more conditions
         auto op = optrs.pop();
         applyOperation(op, optrs, opnds);
     }
