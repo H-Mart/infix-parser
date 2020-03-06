@@ -39,48 +39,49 @@ int main() {
     LastRead lastRead = OPERATOR;  // if the first character is a '-'
                                    // then it needs to be treated as a negative
 
-    while (1) {
-        std::string test;
-        std::cout << "-->";
-        std::cin >> test;
-        
-        for (auto ch : test) {
-            if (isdigit(ch)) {
-                opnds.push(ch - '0');
-                lastRead = OPERAND;
-            } else if (ch == ' ') {
-                continue;
-            } else if (ch == '(') {
-                optrs.push(cop_ptr(&operators[ch]));
-                lastRead = OPERAND;
-            } else if (ch == ')') {
-                auto op = optrs.pop();
-                while (op->precedence != -1) {
-                    applyOperation(op, optrs, opnds);
-                    op = optrs.pop();
-                }
-            } else {
-                cop_ptr op;
-                if (ch == '-' && lastRead == OPERATOR) {
-                    op = cop_ptr(&operators['~']);
-                } else {
-                    op = cop_ptr(&operators[ch]);
-                }
-                while (!optrs.isEmpty() && checkEval(op, optrs.peek())) {
-                    auto topOp = optrs.pop();
-                    applyOperation(topOp, optrs, opnds);
-                }
-                optrs.push(op);
-                lastRead = OPERATOR;
-            }
-        }
-        while (!optrs.isEmpty()) {  // need more conditions
+    std::string test;
+    std::cout << "-->";
+    std::cin >> test;
+
+    // auto test = std::string("(-1)^7");
+
+    for (auto ch : test) {
+        if (isdigit(ch)) {
+            opnds.push(ch - '0');
+            lastRead = OPERAND;
+        } else if (ch == ' ') {
+            continue;
+        } else if (ch == '(') {
+            optrs.push(cop_ptr(&operators[ch]));
+            lastRead = OPERATOR;
+        } else if (ch == ')') {
             auto op = optrs.pop();
-            applyOperation(op, optrs, opnds);
+            while (op->precedence != -1) {
+                applyOperation(op, optrs, opnds);
+                op = optrs.pop();
+            }
+        } else {
+            cop_ptr op;
+            if (ch == '-' && lastRead == OPERATOR) {
+                op = cop_ptr(&operators['~']);
+            } else {
+                op = cop_ptr(&operators[ch]);
+            }
+            while (!optrs.isEmpty() && checkEval(op, optrs.peek())) {
+                auto topOp = optrs.pop();
+                applyOperation(topOp, optrs, opnds);
+            }
+            optrs.push(op);
+            lastRead = OPERATOR;
         }
-        std::cout << "result: " << opnds.pop() << std::endl;
     }
+    while (!optrs.isEmpty()) {  // need more conditions
+        auto op = optrs.pop();
+        applyOperation(op, optrs, opnds);
+    }
+    std::cout << "result: " << opnds.pop() << std::endl;
 }
+
 void applyOperation(cop_ptr& op, Stack<cop_ptr, MAX_STACK_SIZE>& optrs,
                     Stack<double, MAX_STACK_SIZE>& opnds) {
     if (op->nAry == BINARY) {
