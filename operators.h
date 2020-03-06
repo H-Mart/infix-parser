@@ -48,8 +48,7 @@ class Neg : public Operator {
 };
 
 class LeftParen : public Operator {};
-// using op_ptr = std::shared_ptr<Operator>;
-using op_ptr = Operator*;
+using op_ptr = std::shared_ptr<Operator>;
 
 struct CompleteOperator {
     op_ptr op;
@@ -58,6 +57,5 @@ struct CompleteOperator {
     Nary nAry;
 };
 
-// using cop_ptr = std::shared_ptr<CompleteOperator>;
 using cop_ptr = CompleteOperator*;
 #endif
