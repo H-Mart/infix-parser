@@ -5,7 +5,7 @@
 #include "operators.h"
 #include "stack.h"
 
-const int MAX_STACK_SIZE = 1000;
+const int MAX_STACK_SIZE = 5;
 
 //todo currently pops more off stack than exist
 
@@ -18,7 +18,8 @@ std::unordered_map<char, CompleteOperator> operators = {
     {'~', CompleteOperator{op_ptr(new Neg), 10, RIGHTLEFT, UNARY}},
     {'(', CompleteOperator{op_ptr(new LeftParen), -1, RIGHTLEFT, UNARY}}};
 
-enum LastRead { OPERATOR, OPERAND };
+enum LastRead { OPERATOR,
+                OPERAND };
 
 void applyOperation(cop_ptr&, Stack<cop_ptr, MAX_STACK_SIZE>&,
                     Stack<double, MAX_STACK_SIZE>&);
@@ -28,7 +29,7 @@ int main() {
     Stack<double, MAX_STACK_SIZE> opnds;
     LastRead lastRead;
 
-    auto test = std::string("1+2*3+1");
+    auto test = std::string("-((1+2)^(3+1))");
 
     for (auto ch : test) {
         if (isdigit(ch)) {
@@ -37,11 +38,13 @@ int main() {
         } else if (ch == ' ') {
             continue;
         } else if (ch == '(') {
-            continue;
+            optrs.push(cop_ptr(&operators[ch]));
+            lastRead = OPERAND;
         } else if (ch == ')') {
             auto op = optrs.pop();
             while (op->precedence != -1) {
                 applyOperation(op, optrs, opnds);
+                op = optrs.pop();
             }
         } else {
             cop_ptr op;
@@ -50,16 +53,14 @@ int main() {
             } else {
                 op = cop_ptr(&operators[ch]);
             }
-            if (!optrs.isEmpty()) {
-                auto stackTop = optrs.pop();
-                optrs.push(stackTop);
-            }
             while (!optrs.isEmpty() &&
-                   optrs.peek()->precedence >= op->precedence) {// &&
-                   //(op->assoc != optrs.peek()->assoc != RIGHTLEFT)) {
-                applyOperation(op, optrs, opnds);
+                   (optrs.peek()->precedence >= op->precedence) &&
+                   (op->assoc != RIGHTLEFT && optrs.peek()->assoc != RIGHTLEFT)) {
+                auto topOp = optrs.pop();
+                applyOperation(topOp, optrs, opnds);
             }
             optrs.push(op);
+            lastRead = OPERATOR;
         }
     }
     while (!optrs.isEmpty()) {

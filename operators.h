@@ -38,10 +38,8 @@ class Sub : public Operator {
 };
 
 class Exp : public Operator {
-    virtual int apply(int val1, int val2) { return pow(val1, val2); }
-    virtual double apply(double val1, double val2) { return pow(val1, val2); }
-    virtual double apply(int val1, double val2) { return pow(val1, val2); }
-    virtual double apply(double val1, int val2) { return pow(val1, val2); }
+    virtual int apply(int val1, int val2) { return pow(val2, val1); }
+    virtual double apply(double val1, double val2) { return pow(val2, val1); }
 };
 
 class Neg : public Operator {
