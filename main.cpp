@@ -27,7 +27,8 @@ void applyOperation(cop_ptr&, Stack<cop_ptr, MAX_STACK_SIZE>&,
 int main() {
     Stack<cop_ptr, MAX_STACK_SIZE> optrs;
     Stack<double, MAX_STACK_SIZE> opnds;
-    LastRead lastRead;
+    LastRead lastRead = OPERATOR; // if the first character is a '-'
+                                  // then it needs to be treated as a negative
 
     auto test = std::string("-((1+2)^(3+1))");
 

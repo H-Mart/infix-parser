@@ -6,44 +6,40 @@
 // val1 will always be the top element, i.e. the operand to the right
 // val2 will always be the next element, i.e. the operand to the left
 
-enum Associatvity { LEFTRIGHT, RIGHTLEFT };
-enum Nary { BINARY, UNARY };
+enum Associatvity { LEFTRIGHT,
+                    RIGHTLEFT };
+enum Nary { BINARY,
+            UNARY };
 
 class Operator {
    public:
-    virtual int apply(int val1, int val2){}
-    virtual double apply(double val1, double val2){}
-    virtual double apply(int val1) {}
+    // binary
+    virtual double apply(double val1, double val2) {}
+    // unary
     virtual double apply(double val1) {}
 };
 
 class Plus : public Operator {
-    virtual int apply(int val1, int val2) { return val1 + val2; }
     virtual double apply(double val1, double val2) { return val1 + val2; }
 };
 
 class Mul : public Operator {
-    virtual int apply(int val1, int val2) { return val1 * val2; }
     virtual double apply(double val1, double val2) { return val1 * val2; }
 };
 
 class Div : public Operator {
-    virtual int apply(int val1, int val2) { return val2 / double(val1); }
     virtual double apply(double val1, double val2) { return val2 / val1; }
 };
 
 class Sub : public Operator {
-    virtual int apply(int val1, int val2) { return val2 - val1; }
     virtual double apply(double val1, double val2) { return val2 - val1; }
 };
 
 class Exp : public Operator {
-    virtual int apply(int val1, int val2) { return pow(val2, val1); }
     virtual double apply(double val1, double val2) { return pow(val2, val1); }
 };
 
 class Neg : public Operator {
-    virtual double apply(int val1) { return val1 * -1; }
     virtual double apply(double val1) { return val1 * -1; }
 };
 
