@@ -56,12 +56,6 @@ struct CompleteOperator {
     int precedence;
     Associatvity assoc;
     Nary nAry;
-    // explicit CompleteOperator();
-    // CompleteOperator(const CompleteOperator&) = delete;
-    // CompleteOperator& operator=(const CompleteOperator&) = delete;
-    // ~CompleteOperator() = default;
-    // CompleteOperator(Operator* op, int prec, Associatvity assoc, Nary nary)
-    //     : op(op_ptr(op)), precedence(prec), assoc(assoc), nAry(nary) {}
 };
 
 // using cop_ptr = std::shared_ptr<CompleteOperator>;
